@@ -28,7 +28,7 @@ class McpServer(Server):
                 if cursor.fetchone()[0] == 0:
                     cursor.execute(
                         "INSERT INTO notes (name, content) VALUES (?, ?)",
-                        ("example", "This is an example note.")
+                        ("example", "This is an example note."),
                     )
             conn.commit()
 
@@ -55,13 +55,13 @@ class McpServer(Server):
             with closing(conn.cursor()) as cursor:
                 cursor.execute(
                     "INSERT OR REPLACE INTO notes (name, content) VALUES (?, ?)",
-                    (name, content)
+                    (name, content),
                 )
             conn.commit()
 
     def __init__(self):
         super().__init__("sqlite")
-        
+
         # Initialize SQLite database
         self.db_path = "notes.db"
         self._init_database()
@@ -118,10 +118,14 @@ class McpServer(Server):
             """Generate a prompt using notes from the database"""
             if name != "summarize-notes":
                 raise ValueError(f"Unknown prompt: {name}")
-            notes = "<notes>\n" + "\n".join(
-                f"<note name='{name}'>\n{content}\n</note>"
-                for name, content in self._get_notes().items()
-            ) + "\n</notes>"
+            notes = (
+                "<notes>\n"
+                + "\n".join(
+                    f"<note name='{name}'>\n{content}\n</note>"
+                    for name, content in self._get_notes().items()
+                )
+                + "\n</notes>"
+            )
             style = (arguments or {}).get("style", "simple")
             prompt = """
             Your task is to provide a summary of the notes provided below.
