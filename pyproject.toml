@@ -11,4 +11,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-sqlite = "sqlite:main"
+mcp-server-sqlite = "mcp_server_sqlite:main"
