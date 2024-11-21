@@ -10,14 +10,8 @@ import mcp.server.stdio
 from pydantic import AnyUrl
 from typing import Any
 
-# Set up logging to file
-log_file = Path('mcp_server.log')
-handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('mcp_sqlite_server')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
 logger.info("Starting MCP SQLite Server")
 
 PROMPT_TEMPLATE = """
