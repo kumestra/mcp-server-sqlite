@@ -1,6 +1,6 @@
 [project]
 name = "mcp-server-sqlite"
-version = "0.3.0"
+version = "0.3.1"
 description = "A simple SQLite MCP server"
 readme = "README.md"
 requires-python = ">=3.11"
