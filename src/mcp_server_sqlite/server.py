@@ -8,6 +8,7 @@ import mcp.types as types
 from mcp.server import NotificationOptions, Server
 import mcp.server.stdio
 from pydantic import AnyUrl
+from typing import Any
 
 # Set up logging to file
 log_file = Path('mcp_server.log')
@@ -331,12 +332,10 @@ async def main(db_path: str):
                 db.insights.append(arguments["insight"])
                 _ = db._synthesize_memo()
 
-                    # Notify clients that the memo resource has changed
-                    await self.request_context.session.send_resource_updated(AnyUrl("memo://insights"))
-                    
-                    return [types.TextContent(type="text", text="Insight added to memo")]
-                if not arguments:
-                    raise ValueError("Missing arguments")
+                # Notify clients that the memo resource has changed
+                await self.request_context.session.send_resource_updated(AnyUrl("memo://insights"))
+                
+                return [types.TextContent(type="text", text="Insight added to memo")]
 
             if not arguments:
                 raise ValueError("Missing arguments")
