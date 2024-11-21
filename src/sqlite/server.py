@@ -7,14 +7,12 @@ from mcp.server.models import InitializationOptions
 import mcp.types as types
 from mcp.server import NotificationOptions, Server, AnyUrl
 import mcp.server.stdio
-from anthropic import Anthropic
 
 # Set up logging to file
 log_file = Path('mcp_server.log')
 handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
-
 logger = logging.getLogger('mcp_sqlite_server')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
@@ -25,23 +23,6 @@ class McpServer(Server):
         """Initialize connection to the SQLite database"""
         logger.debug("Initializing database connection")
         with closing(sqlite3.connect(self.db_path)) as conn:
-<<<<<<< HEAD
-            with closing(conn.cursor()) as cursor:
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS notes (
-                        name TEXT PRIMARY KEY,
-                        content TEXT NOT NULL
-                    )
-                """)
-                # Add example note if table is empty
-                cursor.execute("SELECT COUNT(*) FROM notes")
-                if cursor.fetchone()[0] == 0:
-                    cursor.execute(
-                        "INSERT INTO notes (name, content) VALUES (?, ?)",
-                        ("example", "This is an example note."),
-                    )
-            conn.commit()
-=======
             conn.row_factory = sqlite3.Row
             conn.close()
             
@@ -53,81 +34,17 @@ class McpServer(Server):
         
         insights = "\n".join(f"- {insight}" for insight in self.insights)
         
-        if self.anthropic_api_key is None:
-            memo = "📊 Business Intelligence Memo 📊\n\n"
-            memo += "Key Insights Discovered:\n\n"
-            memo += insights
-                
-            if len(self.insights) > 1:
-                memo += "\nSummary:\n"
-                memo += f"Analysis has revealed {len(self.insights)} key business insights that suggest opportunities for strategic optimization and growth."
-                
-            logger.debug("Generated basic memo format")
-            return memo
-        else:
-            try:
-                logger.debug("Requesting memo generation from Anthropic")
-                prompt = """
-                You are tasked with summarizing a set of business insights into a formal business memo. The insights are typically 1-2 sentences each and cover various aspects of the business. Your goal is to create a concise, well-organized memo that effectively communicates these insights to the recipient.
->>>>>>> 67b071f (new SQLite server for demo and Getting started guide. Added contributing.md and pull_request_template.md)
+        memo = "📊 Business Intelligence Memo 📊\n\n"
+        memo += "Key Insights Discovered:\n\n"
+        memo += insights
+            
+        if len(self.insights) > 1:
+            memo += "\nSummary:\n"
+            memo += f"Analysis has revealed {len(self.insights)} key business insights that suggest opportunities for strategic optimization and growth."
+            
+        logger.debug("Generated basic memo format")
+        return memo
 
-                Here are the business insights you need to summarize:
-
-                <insights>
-                {insights}
-                </insights>
-
-<<<<<<< HEAD
-    def _add_note(self, name: str, content: str):
-        """Helper method to add or update a note in the database"""
-        with closing(sqlite3.connect(self.db_path)) as conn:
-            with closing(conn.cursor()) as cursor:
-                cursor.execute(
-                    "INSERT OR REPLACE INTO notes (name, content) VALUES (?, ?)",
-                    (name, content),
-=======
-                To create the memo, follow these steps:
-
-                1. Review all the insights carefully.
-                2. Group related insights together under appropriate subheadings.
-                3. Summarize each group of insights into 1-2 concise paragraphs.
-                4. Ensure the memo flows logically from one point to the next.
-                5. Use professional language and maintain a formal tone throughout the memo.
-
-                Format the memo using these guidelines:
-                - Single-space the content, with a blank line between paragraphs
-                - Use bullet points or numbered lists where appropriate
-                - Keep the entire memo to one page if possible, two pages maximum
-
-                Write your final memo within <memo> tags. Ensure that all components of the memo are included and properly formatted.
-                """.format(insights=insights)
-                message = self.anthropic_client.messages.create(
-                    max_tokens=4096,
-                    messages=[
-                        {
-                            "role": "user", 
-                            "content": prompt
-                        },
-                        {
-                            "role": "assistant",
-                            "content": "<memo>"
-                        }
-                    ],
-                    model="claude-3-sonnet-20240229",
-                    stop_sequences=["</memo>"],
->>>>>>> 67b071f (new SQLite server for demo and Getting started guide. Added contributing.md and pull_request_template.md)
-                )
-                logger.debug("Successfully received memo from Anthropic")
-                return message.content[0].text.strip()
-            except Exception as e:
-                logger.error(f"Error generating memo with Anthropic: {e}")
-                return insights
-
-<<<<<<< HEAD
-    def __init__(self):
-        super().__init__("sqlite")
-
-=======
     def _execute_query(self, query: str, params=None) -> list[dict]:
         """Execute a SQL query and return results as a list of dictionaries"""
         logger.debug(f"Executing query: {query}")
@@ -153,22 +70,16 @@ class McpServer(Server):
             logger.error(f"Database error executing query: {e}")
             raise
 
-    def __init__(self, db_path: str = "~/sqlite_mcp_server.db", anthropic_api_key: str | None = None):
+    def __init__(self, db_path: str = "~/sqlite_mcp_server.db"):
         logger.info("Initializing McpServer")
         super().__init__("sqlite-manager")
         
->>>>>>> 67b071f (new SQLite server for demo and Getting started guide. Added contributing.md and pull_request_template.md)
         # Initialize SQLite database
         self.db_path = str(Path(db_path).expanduser())
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._init_database()
         logger.debug(f"Initialized database at {self.db_path}")
 
-        # Initialize Anthropic API key
-        self.anthropic_api_key = anthropic_api_key
-        if anthropic_api_key:
-            self.anthropic_client = Anthropic(api_key=anthropic_api_key)
-            logger.debug("Initialized Anthropic client")
         
         # Initialize insights list
         self.insights = []
@@ -181,7 +92,7 @@ class McpServer(Server):
             logger.debug("Handling list_resources request")
             return [
                 types.Resource(
-                    uri=AnyUrl("memo://insights"),  # Changed from memo:///insights
+                    uri=AnyUrl("memo://insights"),  
                     name="Business Insights Memo",
                     description="A living document of discovered business insights",
                     mimeType="text/plain",
@@ -195,7 +106,7 @@ class McpServer(Server):
                 logger.error(f"Unsupported URI scheme: {uri.scheme}")
                 raise ValueError(f"Unsupported URI scheme: {uri.scheme}")
                 
-            path = str(uri).replace("memo://", "")  # Changed to match new URI format
+            path = str(uri).replace("memo://", "")  
             if not path or path != "insights":
                 logger.error(f"Unknown resource path: {path}")
                 raise ValueError(f"Unknown resource path: {path}")
@@ -225,22 +136,6 @@ class McpServer(Server):
             if name != "mcp-demo":
                 logger.error(f"Unknown prompt: {name}")
                 raise ValueError(f"Unknown prompt: {name}")
-<<<<<<< HEAD
-            notes = (
-                "<notes>\n"
-                + "\n".join(
-                    f"<note name='{name}'>\n{content}\n</note>"
-                    for name, content in self._get_notes().items()
-                )
-                + "\n</notes>"
-            )
-            style = (arguments or {}).get("style", "simple")
-            prompt = """
-            Your task is to provide a summary of the notes provided below.
-            {notes}
-            Ensure that the summary is in {style} style.
-            """.format(notes=notes, style=style)
-=======
 
             if not arguments or "topic" not in arguments:
                 logger.error("Missing required argument: topic")
@@ -329,7 +224,6 @@ class McpServer(Server):
             """.format(topic=topic)
 
             logger.debug(f"Generated prompt template for topic: {topic}")
->>>>>>> 67b071f (new SQLite server for demo and Getting started guide. Added contributing.md and pull_request_template.md)
             return types.GetPromptResult(
                 description=f"Demo template for {topic}",
                 messages=[
@@ -438,7 +332,7 @@ class McpServer(Server):
                     memo = self._synthesize_memo()
                     
                     # Notify clients that the memo resource has changed
-                    await self.request_context.session.send_resource_updated("memo://insights")  # Changed from memo:///insights
+                    await self.request_context.session.send_resource_updated("memo://insights")  
                     
                     return [types.TextContent(type="text", text="Insight added to memo")]
                 if not arguments:
@@ -470,9 +364,9 @@ class McpServer(Server):
             except Exception as e:
                 return [types.TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def main(db_path: str, anthropic_api_key: str | None = None):
+async def main(db_path: str):
     logger.info(f"Starting SQLite MCP Server with DB path: {db_path}")
-    server = McpServer(db_path, anthropic_api_key)
+    server = McpServer(db_path)
     
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         logger.info("Server running with stdio transport")
@@ -485,8 +379,7 @@ async def main(db_path: str, anthropic_api_key: str | None = None):
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={
-                        "anthropic_api_key": {"key": anthropic_api_key}
-                    } if anthropic_api_key else {},
+                    },
                 ),
             ),
         )

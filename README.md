@@ -37,12 +37,18 @@ The server offers six core tools:
 ## Installation
 
 ```bash
-# Required: Python 3.10+
-python -m pip install mcp-sqlite-server
-
-# Run with default settings
-mcp-sqlite-server
-
-# Run with custom database and Anthropic integration
-mcp-sqlite-server --db-path ~/analysis.db --anthropic-key sk-xxx
+# Add the server to your claude_desktop_config.json
+"mcpServers": {
+    "sqlite": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "parent_of_servers_repo/servers/src/sqlite",
+        "run",
+        "sqlite",
+        "--db-path",
+        "~/test.db"
+      ]
+    }
+  }
 ```
