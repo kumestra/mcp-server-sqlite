@@ -333,7 +333,7 @@ async def main(db_path: str):
                 _ = db._synthesize_memo()
 
                 # Notify clients that the memo resource has changed
-                await self.request_context.session.send_resource_updated(AnyUrl("memo://insights"))
+                await server.request_context.session.send_resource_updated(AnyUrl("memo://insights"))
                 
                 return [types.TextContent(type="text", text="Insight added to memo")]
 
