@@ -39,16 +39,16 @@ The server offers six core tools:
 ```bash
 # Add the server to your claude_desktop_config.json
 "mcpServers": {
-    "sqlite": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "parent_of_servers_repo/servers/src/sqlite",
-        "run",
-        "sqlite",
-        "--db-path",
-        "~/test.db"
-      ]
-    }
+  "sqlite": {
+    "command": "uv",
+    "args": [
+      "--directory",
+      "parent_of_servers_repo/servers/src/sqlite",
+      "run",
+      "mcp-server-sqlite",
+      "--db-path",
+      "~/test.db"
+    ]
   }
+}
 ```
