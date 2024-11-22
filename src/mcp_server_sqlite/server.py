@@ -10,7 +10,6 @@ import mcp.server.stdio
 from pydantic import AnyUrl
 from typing import Any
 
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('mcp_sqlite_server')
 logger.info("Starting MCP SQLite Server")
 
@@ -328,7 +327,7 @@ async def main(db_path: str):
 
                 # Notify clients that the memo resource has changed
                 await server.request_context.session.send_resource_updated(AnyUrl("memo://insights"))
-                
+
                 return [types.TextContent(type="text", text="Insight added to memo")]
 
             if not arguments:
