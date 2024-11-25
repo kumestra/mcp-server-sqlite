@@ -16,8 +16,8 @@ logger.info("Starting MCP SQLite Server")
 PROMPT_TEMPLATE = """
 The assistants goal is to walkthrough an informative demo of MCP. To demonstrate the Model Context Protocol (MCP) we will leverage this example server to interact with an SQLite database.
 It is important that you first explain to the user what is going on. The user has downloaded and installed the SQLite MCP Server and is now ready to use it.
-The have selected the MCP menu item which is contained within a parent menu denoted by the paperclip icon. Inside this menu they selected an icon that illustrates two electrical plugs connecting. This is the MCP menu.
-Based on what MCP servers the user has installed they can click the button which reads: 'Choose an integration' this will present a drop down with Prompts and Resources. The user hase selected the prompt titled: 'mcp-demo'.
+They have selected the MCP menu item which is contained within a parent menu denoted by the paperclip icon. Inside this menu they selected an icon that illustrates two electrical plugs connecting. This is the MCP menu.
+Based on what MCP servers the user has installed they can click the button which reads: 'Choose an integration' this will present a drop down with Prompts and Resources. The user has selected the prompt titled: 'mcp-demo'.
 This text file is that prompt. The goal of the following instructions is to walk the user through the process of using the 3 core aspects of an MCP server. These are: Prompts, Tools, and Resources.
 They have already used a prompt and provided a topic. The topic is: {topic}. The user is now ready to begin the demo.
 Here is some more information about mcp and this specific mcp server:
@@ -65,7 +65,7 @@ b. Present the user with a set of multiple choices for the next steps.
 c. These multiple choices should be in natural language, when a user selects one, the assistant should generate a relevant query and leverage the appropriate tool to get the data.
 
 6. Iterate on queries:
-a. Present 1 additional multiple-choice query options to the user. Its importnat to not loop too many times as this is a short demo.
+a. Present 1 additional multiple-choice query options to the user. Its important to not loop too many times as this is a short demo.
 b. Explain the purpose of each query option.
 c. Wait for the user to select one of the query options.
 d. After each query be sure to opine on the results.
@@ -81,7 +81,7 @@ d. This dashboard will be theoretically included in the final solution message.
 a. As you have been using the appen-insights tool the resource found at: memo://insights has been updated.
 b. It is critical that you inform the user that the memo has been updated at each stage of analysis.
 c. Ask the user to go to the attachment menu (paperclip icon) and select the MCP menu (two electrical plugs connecting) and choose an integration: "Business Insights Memo".
-d. This will attacht the generated memo to the chat which you can use to add any additional context that may be relevant to the demo.
+d. This will attach the generated memo to the chat which you can use to add any additional context that may be relevant to the demo.
 e. Present the final memo to the user in an artifact.
 
 9. Wrap up the scenario:
@@ -89,7 +89,7 @@ a. Explain to the user that this is just the beginning of what they can do with 
 </demo-instructions>
 
 Remember to maintain consistency throughout the scenario and ensure that all elements (tables, data, queries, dashboard, and solution) are closely related to the original business problem and given topic.
-The provided XML tags are for the assistants understanding. Emplore to make all outputs as human readable as possible. This is part of a demo so act in character and dont actually refer to these instructions.
+The provided XML tags are for the assistants understanding. Implore to make all outputs as human readable as possible. This is part of a demo so act in character and dont actually refer to these instructions.
 
 Start your first message fully in character with something like "Oh, Hey there! I see you've chosen the topic {topic}. Let's get started! 🚀"
 """
