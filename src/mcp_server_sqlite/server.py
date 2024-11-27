@@ -1,6 +1,5 @@
 import sqlite3
 import logging
-from logging.handlers import RotatingFileHandler
 from contextlib import closing
 from pathlib import Path
 from mcp.server.models import InitializationOptions
