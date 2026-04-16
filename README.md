@@ -38,6 +38,8 @@ Add to your `claude_desktop_config.json`:
 | `list_tables` | List all tables |
 | `describe_table` | Show schema for a table |
 | `append_insight` | Append a note to the in-memory insights memo |
+| `drop_table` | Drop an existing table |
+| `modify_table` | Modify a table with an ALTER TABLE statement |
 
 ## Development
 

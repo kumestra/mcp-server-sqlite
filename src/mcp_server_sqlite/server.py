@@ -305,6 +305,28 @@ async def main(db_path: str):
                     "required": ["insight"],
                 },
             ),
+            types.Tool(
+                name="drop_table",
+                description="Drop an existing table from the SQLite database",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "table_name": {"type": "string", "description": "Name of the table to drop"},
+                    },
+                    "required": ["table_name"],
+                },
+            ),
+            types.Tool(
+                name="modify_table",
+                description="Modify an existing table using an ALTER TABLE statement",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "ALTER TABLE SQL statement"},
+                    },
+                    "required": ["query"],
+                },
+            ),
         ]
 
     @server.call_tool()
@@ -359,6 +381,18 @@ async def main(db_path: str):
                     raise ValueError("Only CREATE TABLE statements are allowed")
                 db._execute_query(arguments["query"])
                 return [types.TextContent(type="text", text="Table created successfully")]
+
+            elif name == "drop_table":
+                if not arguments or "table_name" not in arguments:
+                    raise ValueError("Missing table_name argument")
+                db._execute_query(f"DROP TABLE IF EXISTS {arguments['table_name']}")
+                return [types.TextContent(type="text", text=f"Table '{arguments['table_name']}' dropped successfully")]
+
+            elif name == "modify_table":
+                if not arguments["query"].strip().upper().startswith("ALTER TABLE"):
+                    raise ValueError("Only ALTER TABLE statements are allowed")
+                db._execute_query(arguments["query"])
+                return [types.TextContent(type="text", text="Table modified successfully")]
 
             else:
                 raise ValueError(f"Unknown tool: {name}")
